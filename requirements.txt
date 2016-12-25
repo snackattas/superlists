@@ -1,9 +1,11 @@
+awscli==1.11.34
 botocore==1.4.91
 colorama==0.3.7
 decorator==4.0.10
 diagnostics==0.2.4
 Django==1.10.4
 docutils==0.13.1
+gunicorn==19.6.0
 ipython==5.1.0
 ipython-genutils==0.1.0
 jmespath==0.9.0
