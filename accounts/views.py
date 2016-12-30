@@ -6,9 +6,10 @@ from django.shortcuts import redirect, render
 from django.core.mail import send_mail
 
 from accounts.models import Token
-
+import logging
 
 def send_login_email(request):
+    logging.warning("in send login email")
     email = request.POST['email']
     uid = str(uuid.uuid4())
     Token.objects.create(email=email, uid=uid)
@@ -19,13 +20,14 @@ def send_login_email(request):
     send_mail(
         'Your login link for Superlists',
         'Use this link to log in:\n\n{url}'.format(url=url),
-        'noreply@superlists',
+        'noreply@gmail.com',
         [email],
     )
     return render(request, 'login_email_sent.html')
 
 
 def login(request):
+    logging.warning("in login")
     print('login view', file=sys.stderr)
     uid = request.GET.get('uid')
     user = authenticate(uid=uid)
@@ -34,5 +36,6 @@ def login(request):
     return redirect('/')
 
 def logout(request):
+    logging.warning("in logout")
     auth_logout(request)
     return redirect('/')
