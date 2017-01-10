@@ -33,3 +33,9 @@ Assume we have a user account at /home/username
          ├── source
          ├── static
          └── virtualenv
+
+## Upstart Job
+
+* see gunicorn-upstart.template.conf
+* replace SITENAME with, eg, staging.my-domain.com
+* replace SEKRIT with email password

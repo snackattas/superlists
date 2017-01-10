@@ -43,10 +43,9 @@ class LoginTest(FunctionalTest):
 
         # she clicks it
         self.browser.get(url)
-        logging.warning(url)
-        logging.warning(test_email)
+
         # she is logged in!
-        import pdb;pdb.set_trace()
+
         self.assert_logged_in(email=test_email)
 
         # Now she logs out
