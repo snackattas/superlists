@@ -4,7 +4,7 @@ import os
 import poplib
 import time
 from .base import FunctionalTest
-
+import logging
 SUBJECT = 'Your login link for Superlists'
 
 
@@ -43,8 +43,10 @@ class LoginTest(FunctionalTest):
 
         # she clicks it
         self.browser.get(url)
-
+        logging.warning(url)
+        logging.warning(test_email)
         # she is logged in!
+        import pdb;pdb.set_trace()
         self.assert_logged_in(email=test_email)
 
         # Now she logs out

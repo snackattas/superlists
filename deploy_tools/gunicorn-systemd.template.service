@@ -5,8 +5,12 @@ Description=Gunicorn server for SITENAME
 Restart=on-failure
 User=zattas
 WorkingDirectory=/home/zattas/sites/SITENAME/source
+Environment=EMAIL_PASSWORD=SEKRIT
 ExecStart=/home/zattas/sites/SITENAME/virtualenv/bin/gunicorn \
     --bind unix:/tmp/SITENAME.socket \
+    --access-logfile ../access.log \
+    --error-logfile ../error.log \
+    --capture_output
     superlists.wsgi:application
 
 [Install]
