@@ -4,6 +4,7 @@ from unittest import skip
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from .server_tools import reset_database
 
 class FunctionalTest(StaticLiveServerTestCase):
 
@@ -20,10 +21,13 @@ class FunctionalTest(StaticLiveServerTestCase):
         cls.setChromedriverPath()
         for arg in sys.argv:
             if 'liveserver' in arg:
-                cls.server_url = 'http://' + arg.split('=')[1]
+                cls.server_host = arg.split('=')[1]
+                cls.server_url = "http://" + cls.server_host
                 cls.live_server_url = ''
+                cls.against_staging = True
                 return
         super().setUpClass()
+        cls.against_staging = False
         cls.server_url = cls.live_server_url
 
 
@@ -34,6 +38,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
 
     def setUp(self):
+        if self.against_staging:
+            resetdatabase(self.server_host)
         self.browser = webdriver.Chrome(executable_path=self.chromedriver_path)
         self.browser.implicitly_wait(3)
 
