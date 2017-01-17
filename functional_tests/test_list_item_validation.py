@@ -31,7 +31,6 @@ class ItemValidationTest(FunctionalTest):
         self.check_for_row_in_list_table('1: Buy milk')
         rows = self.browser.find_elements_by_css_selector('#id_list_table tr')
         self.assertEqual(len(rows), 1)
-
         # And she can correct it by filling some text in
 
     def test_cannot_add_duplicate_items(self):
