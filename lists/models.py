@@ -3,13 +3,9 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 
 class List(models.Model):
-<<<<<<< HEAD
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-=======
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
->>>>>>> 716a2840d4c0fde5bc78357deb5be12fe7a65f32
     def get_absolute_url(self):
         return reverse('view_list', args=[self.id])
 
