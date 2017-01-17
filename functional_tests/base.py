@@ -9,16 +9,7 @@ from .server_tools import reset_database
 class FunctionalTest(StaticLiveServerTestCase):
 
     @classmethod
-    def setChromedriverPath(cls):
-        BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-        DIR = os.path.join(BASE_DIR, 'chromedriver')
-        cls.chromedriver_path = DIR
-        return DIR
-
-
-    @classmethod
     def setUpClass(cls):
-        cls.setChromedriverPath()
         for arg in sys.argv:
             if 'liveserver' in arg:
                 cls.server_host = arg.split('=')[1]
@@ -40,7 +31,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     def setUp(self):
         if self.against_staging:
             reset_database(self.server_host)
-        self.browser = webdriver.Chrome(executable_path=self.chromedriver_path)
+        self.browser = webdriver.Chrome()
         self.browser.implicitly_wait(3)
 
 
