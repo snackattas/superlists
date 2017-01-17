@@ -5,5 +5,4 @@ Here are my versions of the sites.  They are a work in progress.  Please navigat
 * `staging: ` [staging.obeymyowntestinggoat.website](staging.obeymyowntestinggoat.website)
 * `production: ` [obeymyowntestinggoat.website](obeymyowntestinggoat.website)  
 
-# Currently Working On:
-Chapter 22
+# Currently Working On: Chapter 19

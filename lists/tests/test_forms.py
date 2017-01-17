@@ -8,27 +8,6 @@ from unittest.mock import patch, Mock
 
 class NewListFormTest(unittest.TestCase):
 
-    # @patch('lists.forms.List')
-    # @patch('lists.forms.Item')
-    # def test_save_creates_new_list_and_item_from_post_data(
-    #     self, mockItem, mockList
-    # ):
-    #     mock_item = mockItem.return_value
-    #     mock_list = mockList.return_value
-    #     user = Mock()
-    #     form = NewListForm(data={'text': 'new item text'})
-    #     form.is_valid()
-    #
-    #     def check_item_text_and_list():
-    #         self.assertEqual(mock_item.text, 'new item text')
-    #         self.assertEqual(mock_item.list, mock_list)
-    #         self.assertTrue(mock_list.save.called)
-    #     mock_item.save.side_effect = check_item_text_and_list
-    #
-    #     form.save(owner=user)
-    #
-    #     self.assertTrue(mock_item.save.called)
-
     @patch('lists.forms.List.create_new')
     def test_save_creates_new_list_from_post_data_if_user_not_authenticated(
         self, mock_List_create_new

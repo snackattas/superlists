@@ -80,7 +80,7 @@ class HomePageTest(TestCase):
         self.assertIsInstance(response.context['form'], ItemForm)
 
 
-class NewListIntegratedTest(TestCase):
+class NewListViewsIntegratedTest(TestCase):
 
     def test_can_save_a_POST_request(self):
         self.client.post('/lists/new', data={'text': 'A new list item'})
