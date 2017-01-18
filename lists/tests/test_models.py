@@ -88,3 +88,53 @@ class ListModelTest(TestCase):
         Item.objects.create(list=list_, text='first item')
         Item.objects.create(list=list_, text='second item')
         self.assertEqual(list_.name, 'first item')
+
+    # sharedwith TestCase
+    def test_list_has_shared_with_add_accepts_user_object(self):
+        list_ = List.objects.create()
+        user = User.objects.create(email="a@b.com")
+        list_.shared_with.add(user)
+
+    def test_list_has_shared_with_add_accepts_many_user_objects(self):
+        list_ = List.objects.create()
+        user1 = User.objects.create(email="a@b.com")
+        user2 = User.objects.create(email="b@b.com")
+        user3 = User.objects.create(email="c@b.com")
+        user4 = User.objects.create(email="d@b.com")
+        list_.shared_with.add(user1)
+        list_.shared_with.add(user2)
+        list_.shared_with.add(user3, user4)
+
+    def test_list_shared_with_all_has_users_when_saved(self):
+        list_ = List.objects.create()
+        user1 = User.objects.create(email="a@b.com")
+        user2 = User.objects.create(email="b@b.com")
+        list_.shared_with.add(user1, user2)
+        self.assertIn(user1, list_.shared_with.all())
+        self.assertIn(user2, list_.shared_with.all())
+
+    def test_list_shared_with_all_has_no_users_when_not_saved(self):
+        list_ = List()
+        user1 = User.objects.create(email="a@b.com")
+        user2 = User.objects.create(email="b@b.com")
+        with self.assertRaises(ValueError):
+            list_.shared_with.add(user1, user2)
+
+    def test_list_shared_with_accepts_user_email(self):
+        list_ = List.objects.create()
+        user = User.objects.create(email="a@b.com")
+        list_.shared_with.add(user.email)
+        self.assertEqual(list_.shared_with.first(), user)
+
+    def test_list_shared_with_does_not_add_non_user(self):
+        list_ = List.objects.create()
+        nonuser = "fake@gmail.com"
+        list_.shared_with.add(nonuser)
+        self.assertEqual(list_.shared_with.all().count(), 0)
+
+    def test_list_shared_with_adding_same_user_does_nothing(self):
+        list_ = List.objects.create()
+        user = User.objects.create(email="a@b.com")
+        list_.shared_with.add(user)
+        list_.shared_with.add(user)
+        self.assertEqual(list_.shared_with.all().count(), 1)
