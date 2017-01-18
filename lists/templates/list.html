@@ -5,9 +5,24 @@
 {% block form_action %} {% url 'view_list' list.id %} {% endblock %}
 
 {% block table %}
+    {% if message %}
+    {% if message.level_tag == 'success' %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% else %}
+      <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
+    {% endif %}
+
     <table id="id_list_table" class="table">
         {% for item in list.item_set.all %}
             <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
         {% endfor %}
     </table>
+{% endblock %}
+
+{% block extra_content %}
+  <form method='POST' action="{% url 'share_list' list.id %}">
+  <input name='email' placeholder="your-friend@example.com"></input>
+    {% csrf_token %}
+  </form>
 {% endblock %}
