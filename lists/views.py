@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 from lists.forms import ExistingListItemForm, ItemForm, NewListForm
 from lists.models import Item, List
-
+import logging
 User = get_user_model()
 
 # Create your views here.
@@ -32,3 +32,7 @@ def view_list(request, list_id):
 def my_lists(request, email):
     owner = User.objects.get(email=email)
     return render(request, 'my_lists.html', {'owner': owner})
+
+def share_list(request, list_id):
+    list_ = List.objects.get(id=list_id)
+    return render(request, 'list.html', {'list': list_, "form": ExistingListItemForm(for_list=list_)})

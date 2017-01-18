@@ -203,6 +203,11 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'list.html')
         self.assertEqual(Item.objects.all().count(), 1)
 
+    def test_POST_for_share_list_redirects_to_lists_page(self):
+        list_ = List.objects.create()
+        response = self.client.post('/lists/%d/share/' % (list_.id,), data={'email':'junk@junk.com'})
+        self.assertTemplateUsed(response, 'list.html')
+
 class MyListsTest(TestCase):
 
     def test_my_lists_url_renders_my_lists_template(self):
