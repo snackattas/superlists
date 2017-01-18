@@ -208,6 +208,16 @@ class ListViewTest(TestCase):
         response = self.client.post('/lists/%d/share/' % (list_.id,), data={'email':'junk@junk.com'})
         self.assertTemplateUsed(response, 'list.html')
 
+    def test_shared_with_adds_correct_user_to_shared_with_list(self):
+        sharing_with = User.objects.create(email="sharing@gmail.com")
+        shared_with = User.objects.create(email="shared@gmail.com")
+        list_ = List.objects.create()
+        Item.objects.create(list=list_, text="sample item")
+        self.client.post('/lists/%d/share/' % (list_.id),
+            data={'email':shared_with.email})
+        self.assertEqual(list_.shared_with.all().count(), 1)
+        self.assertEqual(list_.shared_with.first(), shared_with)
+
 class MyListsTest(TestCase):
 
     def test_my_lists_url_renders_my_lists_template(self):

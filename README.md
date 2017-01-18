@@ -5,4 +5,6 @@ Here are my versions of the sites.  They are a work in progress.  Please navigat
 * `staging: ` [staging.obeymyowntestinggoat.website](http://www.staging.obeymyowntestinggoat.website)
 * `production: ` [obeymyowntestinggoat.website](http://www.obeymyowntestinggoat.website)  
 
-# Currently Working On: Chapter 19
+# Currently Working On: Chapter 22
+* Skipped deploying Jenkins server in chapter 21 due to Jenkins difficulties
+* But did create mechanism to run Selenium headless with xfvb and implemented screenshot_taking mechanism on error
