@@ -101,35 +101,35 @@ class ShareListFormTest(TestCase):
         list_= List.objects.create()
         form = ShareListForm(list_, data={'junk':'its junk'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['shared_with'][0],\
+        self.assertEqual(form.errors['share_with'][0],\
             "This field is required.")
 
     def test_bad_email(self):
         list_= List.objects.create()
-        form = ShareListForm(list_, data={'shared_with':'bademail'})
+        form = ShareListForm(list_, data={'share_with':'bademail'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['shared_with'][0],\
+        self.assertEqual(form.errors['share_with'][0],\
             "Enter a valid email address.")
 
     def test_nonexistent_email(self):
         list_= List.objects.create()
-        form = ShareListForm(list_, data={'shared_with':'a@gmail.com'})
+        form = ShareListForm(list_, data={'share_with':'a@gmail.com'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['shared_with'][0],\
+        self.assertEqual(form.errors['share_with'][0],\
             NONEXISTENT_USER_EMAIL_ERROR)
 
     def test_same_users_email(self):
         user = User.objects.create(email="a@b.com")
         list_= List.objects.create(owner=user)
-        form = ShareListForm(list_, data={'shared_with': user.email})
+        form = ShareListForm(list_, data={'share_with': user.email})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['shared_with'][0],\
+        self.assertEqual(form.errors['share_with'][0],\
             SAME_EMAIL_ERROR)
 
     def test_save_list_without_owner(self):
         user = User.objects.create(email="a@b.com")
         list_ = List.objects.create()
-        form = ShareListForm(list_, data={'shared_with': user.email})
+        form = ShareListForm(list_, data={'share_with': user.email})
         form.is_valid()
         form.save()
 
@@ -137,13 +137,13 @@ class ShareListFormTest(TestCase):
         user = User.objects.create(email="a@b.com")
         user2 = User.objects.create(email="c@d.com")
         list_ = List.objects.create(owner=user)
-        form = ShareListForm(list_, data={'shared_with': user2.email})
+        form = ShareListForm(list_, data={'share_with': user2.email})
         form.is_valid()
         form.save()
 
-    def test_shared_list_cannot_be_valid_without_list_passed_in(self):
+    def test_share_list_cannot_be_valid_without_list_passed_in(self):
         user = User.objects.create(email="a@b.com")
         list_ = List.objects.create()
-        form = ShareListForm(data={'shared_with': user.email})
+        form = ShareListForm(data={'share_with': user.email})
         with self.assertRaises(AttributeError):
             form.is_valid()

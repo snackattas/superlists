@@ -52,12 +52,12 @@ class ShareListForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.list = for_list
 
-    shared_with = forms.EmailField(widget=forms.TextInput(attrs={
+    share_with = forms.EmailField(widget=forms.TextInput(attrs={
         'placeholder': 'your-friend@example.com',
         'class': 'form-control input-sm'}))
 
-    def clean_shared_with(self):
-        email = self.cleaned_data['shared_with']
+    def clean_share_with(self):
+        email = self.cleaned_data['share_with']
         try:
             user = User.objects.get(email=email)
         except ObjectDoesNotExist as e:
@@ -68,4 +68,4 @@ class ShareListForm(forms.Form):
         return email
 
     def save(self):
-        self.list.shared_with.add(self.cleaned_data['shared_with'])
+        self.list.shared_with.add(self.cleaned_data['share_with'])

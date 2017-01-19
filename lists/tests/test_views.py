@@ -9,6 +9,7 @@ from lists.views import home_page
 from lists.models import Item, List
 from lists.forms import (
     DUPLICATE_ITEM_ERROR, EMPTY_ITEM_ERROR,
+    NONEXISTENT_USER_EMAIL_ERROR, SAME_EMAIL_ERROR,
     ExistingListItemForm, ItemForm)
 import unittest
 
@@ -208,15 +209,58 @@ class ListViewTest(TestCase):
         response = self.client.post('/lists/%d/share/' % (list_.id,), data={'email':'junk@junk.com'})
         self.assertTemplateUsed(response, 'list.html')
 
-    def test_shared_with_adds_correct_user_to_shared_with_list(self):
-        sharing_with = User.objects.create(email="sharing@gmail.com")
-        shared_with = User.objects.create(email="shared@gmail.com")
+
+class ListViewShareListFormTest(TestCase):
+
+    def test_shared_with_adds_user_to_list(self):
+        share_with = User.objects.create(email="shared@gmail.com")
         list_ = List.objects.create()
-        Item.objects.create(list=list_, text="sample item")
         self.client.post('/lists/%d/share/' % (list_.id),
-            data={'email':shared_with.email})
+            data={'share_with':share_with.email})
         self.assertEqual(list_.shared_with.all().count(), 1)
-        self.assertEqual(list_.shared_with.first(), shared_with)
+        self.assertEqual(list_.shared_with.first(), share_with)
+
+    def test_shared_with_adds_user_to_list_on_owned_list(self):
+        user = User.objects.create(email="user@gmail.com")
+        share_with = User.objects.create(email="shared@gmail.com")
+        list_ = List.objects.create(owner=user)
+        self.client.post('/lists/%d/share/' % (list_.id),
+            data={'share_with':share_with.email})
+        self.assertEqual(list_.shared_with.all().count(), 1)
+        self.assertEqual(list_.shared_with.first(), share_with)
+
+    def test_shared_with_adds_users_to_list(self):
+        user1 = User.objects.create(email="user1@gmail.com")
+        user2 = User.objects.create(email="user2@gmail.com")
+        list_ = List.objects.create()
+        self.client.post('/lists/%d/share/' % (list_.id),
+            data={'share_with':user1.email})
+        self.assertEqual(list_.shared_with.all().count(), 1)
+        self.client.post('/lists/%d/share/' % (list_.id),
+            data={'share_with':user2.email})
+        self.assertEqual(list_.shared_with.all().count(), 2)
+        self.assertQuerysetEqual(list_.shared_with.all().order_by("email"), map(repr, [user1,user2]))
+
+    def test_for_adding_nonexistent_user(self):
+        list_ = List.objects.create()
+        response = self.client.post('/lists/%d/share/' % (list_.id,),\
+            data={'share_with': "fakeuser@email.com"})
+        self.assertContains(response,\
+            escape(NONEXISTENT_USER_EMAIL_ERROR))
+
+    def test_for_adding_badly_formatted_email(self):
+        list_ = List.objects.create()
+        response = self.client.post('/lists/%d/share/'  % (list_.id,),\
+            data={'share_with': "bademail@email"})
+        self.assertContains(response,\
+            escape("Enter a valid email address."))
+
+    def test_for_adding_blank(self):
+        list_ = List.objects.create()
+        response = self.client.post('/lists/%d/share/'  % (list_.id,),\
+            data={'share_with': ""})
+        self.assertContains(response,\
+            escape("This field is required."))
 
 class MyListsTest(TestCase):
 

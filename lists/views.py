@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
-from lists.forms import ExistingListItemForm, ItemForm, NewListForm
+from lists.forms import ExistingListItemForm, ItemForm, NewListForm, ShareListForm
 from lists.models import Item, List
 import logging
 User = get_user_model()
@@ -27,7 +27,7 @@ def view_list(request, list_id):
         if form.is_valid():
             form.save()
             return redirect(list_)
-    return render(request, 'list.html', {'list': list_, "form": form})
+    return render(request, 'list.html', {'list': list_, "form": form, 'share_form': ShareListForm()})
 
 def my_lists(request, email):
     owner = User.objects.get(email=email)
@@ -35,4 +35,10 @@ def my_lists(request, email):
 
 def share_list(request, list_id):
     list_ = List.objects.get(id=list_id)
-    return render(request, 'list.html', {'list': list_, "form": ExistingListItemForm(for_list=list_)})
+    if request.method == "POST":
+        share_form = ShareListForm(list_, data=request.POST)
+        if share_form.is_valid():
+            share_form.save()
+            return redirect(list_)
+        return render(request, 'list.html', {'list': list_, "form": ExistingListItemForm(for_list=list_), 'share_form':share_form})
+    return redirect(list_)
