@@ -29,7 +29,7 @@
    {% endfor %}
   </ul>
  {% endif %}
- <h2>Share this list</h2>
+ <h2>Share this list:</h2>
  <form method="POST" action="{% url 'share_list' list.id %}">
   {% if share_form.errors %}
    <div class="alert alert-warning">{{share_form.share_with.errors }}</div>
