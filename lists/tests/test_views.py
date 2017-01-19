@@ -209,6 +209,19 @@ class ListViewTest(TestCase):
         response = self.client.post('/lists/%d/share/' % (list_.id,), data={'email':'junk@junk.com'})
         self.assertTemplateUsed(response, 'list.html')
 
+class ListViewOwnerTest(TestCase):
+
+    def test_shows_owner_when_list_has_owner(self):
+        user = User.objects.create(email="user@gmail.com")
+        list_ = List.create_new("test", owner=user)
+        response = self.client.post('/lists/%d/' % (list_.id,))
+        self.assertContains(response, "List owner:")
+        self.assertContains(response, user.email)
+
+    def test_does_not_show_owner_when_list_doesnt_have_owner(self):
+        list_ = List.create_new("test")
+        response = self.client.post('/lists/%d/' % (list_.id,))
+        self.assertNotContains(response, "List owner:")
 
 class ListViewShareListFormTest(TestCase):
 
@@ -275,3 +288,12 @@ class MyListsTest(TestCase):
         correct_user = User.objects.create(email='a@b.com')
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
+
+    def test_user_shares_list_and_it_shows_up_in_sharees_my_lists(self):
+        user = User.objects.create(email='a@b.com')
+        share_with = User.objects.create(email="c@d.com")
+        list_ = List.create_new("item", owner=user)
+        self.client.post("/lists/%d/share/" % (list_.id),\
+            data={'share_with': share_with.email})
+        response = self.client.get('/lists/users/%s/' % (share_with.email,))
+        self.assertContains(response, share_with.email)
