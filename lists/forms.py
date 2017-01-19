@@ -1,11 +1,15 @@
 from django import forms
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 import logging
 from lists.models import Item, List
+from django.contrib.auth import get_user_model
 
-
+User = get_user_model()
 EMPTY_ITEM_ERROR = "You can't have an empty list item"
 DUPLICATE_ITEM_ERROR = "You've already got this in your list"
+NONEXISTENT_USER_EMAIL_ERROR = "The email provided is not a valid user's email"
+SAME_EMAIL_ERROR = "You can't share a list with yourself"
+
 
 class ItemForm(forms.models.ModelForm):
     class Meta:
@@ -41,3 +45,27 @@ class NewListForm(ItemForm):
             return List.create_new(first_item_text=self.cleaned_data['text'], owner=owner)
         else:
             return List.create_new(first_item_text=self.cleaned_data['text'])
+
+class ShareListForm(forms.Form):
+
+    def __init__(self, for_list=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.list = for_list
+
+    shared_with = forms.EmailField(widget=forms.TextInput(attrs={
+        'placeholder': 'your-friend@example.com',
+        'class': 'form-control input-sm'}))
+
+    def clean_shared_with(self):
+        email = self.cleaned_data['shared_with']
+        try:
+            user = User.objects.get(email=email)
+        except ObjectDoesNotExist as e:
+            raise ValidationError(NONEXISTENT_USER_EMAIL_ERROR)
+        if self.list.owner:
+            if email == self.list.owner.email:
+                raise ValidationError(SAME_EMAIL_ERROR)
+        return email
+
+    def save(self):
+        self.list.shared_with.add(self.cleaned_data['shared_with'])
